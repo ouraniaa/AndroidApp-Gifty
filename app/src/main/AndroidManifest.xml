@@ -4,6 +4,8 @@
     package="com.example.androidapp">
 
     <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <!-- Needed by the Greeting Card Generator to reach the Gifty AI backend over HTTPS -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -52,6 +54,10 @@
 
         <activity
             android:name=".ui.DashboardActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.GreetingCardActivity"
             android:exported="false" />
 
     </application>

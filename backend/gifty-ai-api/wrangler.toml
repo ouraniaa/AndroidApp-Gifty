@@ -1,0 +1,55 @@
+# Cloudflare Worker for the Gifty AI Greeting Card Generator.
+#
+# SECRETS ARE NOT STORED HERE. The Gemini key lives only in Cloudflare:
+#   npx wrangler secret put GEMINI_API_KEY
+# For local development put it in .dev.vars (git-ignored), never in this file.
+
+name = "gifty-ai-api"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# Public *.workers.dev URL. Set to false if you later serve it from your own domain/route.
+workers_dev = true
+# No per-version preview URLs: only the main workers.dev URL is public.
+preview_urls = false
+
+[vars]
+# Stable Flash-Lite model with Free Tier availability (verified November 2026).
+GEMINI_MODEL = "gemini-3.5-flash-lite"
+# Kill switch: set to "false" and redeploy to stop all Gemini calls immediately.
+GREETING_ENABLED = "true"
+
+[observability]
+enabled = true
+
+# Rate limiting bindings (Wrangler 4.36.0+). Periods can only be 10 or 60 seconds.
+# Counts are approximate and per Cloudflare location. namespace_id values must be
+# unique within your Cloudflare account; change them if they clash with other Workers.
+
+# Per app install: a normal user rarely needs more than a few cards a minute.
+[[ratelimits]]
+name = "RL_INSTALL"
+namespace_id = "41001"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
+
+# Per client IP: looser, because many mobile users share carrier IPs.
+[[ratelimits]]
+name = "RL_IP"
+namespace_id = "41002"
+
+  [ratelimits.simple]
+  limit = 20
+  period = 60
+
+# Global brake to protect the Gemini Free Tier quota. Check your project's real
+# per-minute limit in Google AI Studio and keep this at or below it.
+[[ratelimits]]
+name = "RL_GLOBAL"
+namespace_id = "41003"
+
+  [ratelimits.simple]
+  limit = 15
+  period = 60

@@ -107,6 +107,14 @@ public class HomeActivity extends Fragment {
             cardWishlist.setOnClickListener(v -> openWishlist());
         }
 
+        //Open the standalone Greeting Card Generator (available to guests too, it uses no stored data)
+        CardView cardGreetingCard = view.findViewById(R.id.cardGreetingCard);
+        if (cardGreetingCard != null) {
+            cardGreetingCard.setOnTouchListener(microInteractionListener);
+            cardGreetingCard.setOnClickListener(v ->
+                    startActivity(new Intent(requireContext(), GreetingCardActivity.class)));
+        }
+
         TextView tvViewAllReminders = view.findViewById(R.id.tvViewAllReminders);
         if (tvViewAllReminders != null) {
             tvViewAllReminders.setOnClickListener(v -> {

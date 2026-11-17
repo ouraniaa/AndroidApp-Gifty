@@ -18,6 +18,18 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Gifty AI backend (Cloudflare Worker). This is a public URL, not a secret:
+        // the Gemini API key lives only in Cloudflare and is never part of the app.
+        buildConfigField "String", "GIFTY_AI_BASE_URL", "\"https://gifty-ai-api.papadopoulouourania20.workers.dev\""
+
+        // Explicit development/testing switch for offline sample templates.
+        // Off by default; enable with: ./gradlew assembleDebug -PgreetingMockMode=true
+        buildConfigField "boolean", "GREETING_CARD_MOCK_MODE", (project.findProperty("greetingMockMode") == "true") ? "true" : "false"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -39,6 +51,8 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.core.splashscreen
     testImplementation libs.junit
+    // Real org.json for local unit tests (android.jar only ships stubs that throw)
+    testImplementation 'org.json:json:20250517'
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
